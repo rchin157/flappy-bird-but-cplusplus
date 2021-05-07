@@ -2,10 +2,17 @@
 
 bool running = true;
 
-void* buffer;
-int buffer_width;
-int buffer_height;
-BITMAPINFO buffer_bitmap_info;
+struct Render_Info {
+	int height;
+	int width;
+	void* memory;
+
+	BITMAPINFO bitmap_info;
+};
+
+Render_Info renderinfo;
+
+#include "Renderer.cpp"
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	LRESULT result = 0;
@@ -17,21 +24,21 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		case WM_SIZE: {
 			RECT rect;
 			GetClientRect(hwnd, &rect);
-			buffer_width = rect.right - rect.left;
-			buffer_height = rect.bottom - rect.top;
+			renderinfo.width = rect.right - rect.left;
+			renderinfo.height = rect.bottom - rect.top;
 
-			int buffer_size = buffer_width * buffer_height * sizeof(unsigned int);
+			int size = renderinfo.width * renderinfo.height * sizeof(unsigned int);
 
-			if (buffer)
-				VirtualFree(buffer, 0, MEM_RELEASE);
-			buffer = VirtualAlloc(0, buffer_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+			if (renderinfo.memory)
+				VirtualFree(renderinfo.memory, 0, MEM_RELEASE);
+			renderinfo.memory = VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
-			buffer_bitmap_info.bmiHeader.biSize = sizeof(buffer_bitmap_info.bmiHeader);
-			buffer_bitmap_info.bmiHeader.biWidth = buffer_width;
-			buffer_bitmap_info.bmiHeader.biHeight = buffer_height;
-			buffer_bitmap_info.bmiHeader.biPlanes = 1;
-			buffer_bitmap_info.bmiHeader.biBitCount = 32;
-			buffer_bitmap_info.bmiHeader.biCompression = BI_RGB;
+			renderinfo.bitmap_info.bmiHeader.biSize = sizeof(renderinfo.bitmap_info.bmiHeader);
+			renderinfo.bitmap_info.bmiHeader.biWidth = renderinfo.width;
+			renderinfo.bitmap_info.bmiHeader.biHeight = renderinfo.height;
+			renderinfo.bitmap_info.bmiHeader.biPlanes = 1;
+			renderinfo.bitmap_info.bmiHeader.biBitCount = 32;
+			renderinfo.bitmap_info.bmiHeader.biCompression = BI_RGB;
 
 		} break;
 		default: {
@@ -68,6 +75,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	ShowWindow(hwnd, nShowCmd);
 
+	//main loop
 	while (running) {
 		MSG message;
 		while (PeekMessage(&message, hwnd, 0, 0, PM_REMOVE)) {
@@ -75,7 +83,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			DispatchMessage(&message);
 		}
 
-		StretchDIBits(hdc, 0, 0, buffer_width, buffer_height, 0, 0, buffer_width, buffer_height, buffer, &buffer_bitmap_info, DIB_RGB_COLORS, SRCCOPY);
+		render_background();
+		draw_rect(renderinfo.width / 4, renderinfo.height / 4, 3 * (renderinfo.width / 4), 3 * (renderinfo.height / 4), 0x32CD32);
+
+		//render
+		StretchDIBits(hdc, 0, 0, renderinfo.width, renderinfo.height, 0, 0, renderinfo.width, renderinfo.height, renderinfo.memory, &renderinfo.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
+		//UpdateWindow(hwnd);
 	}
 
 	return 0;
