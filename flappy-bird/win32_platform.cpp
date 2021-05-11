@@ -1,4 +1,7 @@
 #include <Windows.h>
+#include <stdlib.h>
+#include <time.h>
+#include "util.cpp"
 
 bool running = true;
 
@@ -13,6 +16,8 @@ struct Render_Info {
 Render_Info renderinfo;
 
 #include "Renderer.cpp"
+#include "common.cpp"
+#include "game.cpp"
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	LRESULT result = 0;
@@ -75,20 +80,45 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	ShowWindow(hwnd, nShowCmd);
 
+	Inputs inputs = {};
+
+	srand(time(NULL));
+	Node* head = new Node;
+	(*head).set_wall_position(200);
+	
+
 	//main loop
 	while (running) {
 		MSG message;
+
+		for (int i = 0; i < KEY_COUNT; i++)
+			inputs.keys[i].state_changed = false;
+
 		while (PeekMessage(&message, hwnd, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&message);
-			DispatchMessage(&message);
+			switch (message.message) {
+			case WM_KEYUP:
+			case WM_KEYDOWN: {
+				unsigned int vk_code = (unsigned int)message.wParam;
+				bool is_key_down = ((message.lParam & (1 << 31)) == 0);
+
+				switch (vk_code) {
+				case VK_SPACE: {
+					if (inputs.keys[KEY_SPACE].is_key_down != is_key_down)
+						inputs.keys[KEY_SPACE].state_changed = true;
+					inputs.keys[KEY_SPACE].is_key_down = is_key_down;
+				} break;
+				}
+			} break;
+			default:
+				TranslateMessage(&message);
+				DispatchMessage(&message);
+			}
 		}
 
-		render_background();
-		draw_rect(renderinfo.width / 4, renderinfo.height / 4, 3 * (renderinfo.width / 4), 3 * (renderinfo.height / 4), 0x32CD32);
+		run_game(&inputs, &head);
 
 		//render
 		StretchDIBits(hdc, 0, 0, renderinfo.width, renderinfo.height, 0, 0, renderinfo.width, renderinfo.height, renderinfo.memory, &renderinfo.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
-		//UpdateWindow(hwnd);
 	}
 
 	return 0;
