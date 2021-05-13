@@ -1,3 +1,7 @@
+#define BIRDX -25
+#define BIRD_WIDTH 15
+#define BIRD_HEIGHT 5
+
 float render_scale = 0.01f;
 
 void clear_screen(unsigned int colour) {
@@ -7,10 +11,6 @@ void clear_screen(unsigned int colour) {
 			*pixel++ = colour;
 		}
 	}
-}
-
-void draw_graphic() {
-
 }
 
 void draw_rect_absolute(int x0, int y0, int x1, int y1, unsigned int colour) {
@@ -72,7 +72,36 @@ void draw_rect_relative(float x, float y, float width, float height, unsigned in
 }
 
 void draw_bird(float height) {
-	draw_rect_relative(-25, height, 15, 5, 0xFFFFFF);
-	draw_rect_relative(-21, height + 1, 1, 1, 0);
-	draw_rect_relative(-27, height - 1, 10, 2, 0xFF0000);
+	draw_rect_relative(BIRDX, height, BIRD_WIDTH, BIRD_HEIGHT, 0xFFFFFF);
+	draw_rect_relative(BIRDX * 0.84f, height + 1, BIRD_WIDTH * 0.04f, BIRD_HEIGHT * 0.25f, 0);
+	draw_rect_relative(BIRDX * 1.08f, height - 1, BIRD_WIDTH * 0.667f, BIRD_HEIGHT * 0.4f, 0xFF0000);
+}
+
+int translate_rel_to_abs(float rel) {
+	int scale;
+	if (renderinfo.width < renderinfo.height)
+		scale = renderinfo.width;
+	else
+		scale = renderinfo.height;
+	return (int)(rel * scale * render_scale);
+}
+
+float get_rel_window_height() {
+	int scale;
+	if (renderinfo.width < renderinfo.height)
+		scale = renderinfo.width;
+	else
+		scale = renderinfo.height;
+
+	return ((float)(renderinfo.height) / (float)(scale)) / render_scale;
+}
+
+float get_rel_window_width() {
+	int scale;
+	if (renderinfo.width < renderinfo.height)
+		scale = renderinfo.width;
+	else
+		scale = renderinfo.height;
+
+	return ((float)(renderinfo.width) / (float)(scale)) / render_scale;
 }

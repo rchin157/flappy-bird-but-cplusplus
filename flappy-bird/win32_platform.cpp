@@ -84,8 +84,16 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	srand(time(NULL));
 	Node* head = new Node;
-	(*head).set_wall_position(200);
-	
+	(*head).set_wall_position(100);
+
+	float delta_time = 0.016666f;
+	LARGE_INTEGER frame_start;
+	QueryPerformanceCounter(&frame_start);
+
+	float performance_freq;
+	LARGE_INTEGER perf;
+	QueryPerformanceFrequency(&perf);
+	performance_freq = (float)perf.QuadPart;
 
 	//main loop
 	while (running) {
@@ -115,10 +123,15 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			}
 		}
 
-		run_game(&inputs, &head);
+		run_game(&inputs, &head, delta_time);
 
 		//render
 		StretchDIBits(hdc, 0, 0, renderinfo.width, renderinfo.height, 0, 0, renderinfo.width, renderinfo.height, renderinfo.memory, &renderinfo.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
+
+		LARGE_INTEGER frame_end;
+		QueryPerformanceCounter(&frame_end);
+		delta_time = (float)(frame_end.QuadPart - frame_start.QuadPart) / performance_freq;
+		frame_start = frame_end;
 	}
 
 	return 0;
