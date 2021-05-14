@@ -53,12 +53,10 @@ void Wall::set_passed(bool wall_passed) {
 }
 
 bool Wall::check_colliding(float birdpos) {
-	if (((birdpos + (BIRD_HEIGHT / 2) > gap_height + (GAP_WIDTH / 2) &&
-		birdpos - (BIRD_HEIGHT / 2) < gap_height + (GAP_WIDTH / 2)) ||
-		(birdpos + (BIRD_HEIGHT / 2) < gap_height - (GAP_WIDTH / 2) &&
-		birdpos - (BIRD_HEIGHT / 2) > gap_height - (GAP_WIDTH / 2))) &&
-		birdpos + (BIRD_WIDTH / 2) > x - (WALL_WIDTH / 2) &&
-		birdpos - (BIRD_WIDTH / 2) < x + (WALL_WIDTH / 2)) {
+	if ((birdpos + (BIRD_HEIGHT / 2) > gap_height + (GAP_WIDTH / 2) ||
+		birdpos - (BIRD_HEIGHT / 2) < gap_height - (GAP_WIDTH / 2)) &&
+		BIRDX + (BIRD_WIDTH / 2) > x - (WALL_WIDTH / 2) &&
+		BIRDX - (BIRD_WIDTH / 2) < x + (WALL_WIDTH / 2)) {
 		return true;
 	}
 

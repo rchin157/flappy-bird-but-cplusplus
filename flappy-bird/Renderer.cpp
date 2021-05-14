@@ -105,3 +105,95 @@ float get_rel_window_width() {
 
 	return ((float)(renderinfo.width) / (float)(scale)) / render_scale;
 }
+
+void draw_number(int number, float x, float y, float size, unsigned int colour) {
+	float half_width = size * .5f;
+
+	if (number == 0) {
+		draw_rect_relative(x - half_width, y, half_width, 2.5f * size, colour);
+		draw_rect_relative(x + half_width, y, half_width, 2.5f * size, colour);
+		draw_rect_relative(x, y + size, half_width, half_width, colour);
+		draw_rect_relative(x, y - size, half_width, half_width, colour);
+	}
+
+	while (number) {
+		int digit = number % 10;
+		number = number / 10;
+		switch (digit) {
+		case 0:
+			draw_rect_relative(x - half_width, y, half_width, 2.5f * size, colour);
+			draw_rect_relative(x + half_width, y, half_width, 2.5f * size, colour);
+			draw_rect_relative(x, y + size, half_width, half_width, colour);
+			draw_rect_relative(x, y - size, half_width, half_width, colour);
+			x -= size * 2.f;
+			break;
+		case 1:
+			draw_rect_relative(x, y, half_width, 2.5f * size, colour);
+			x -= size * 1.f;
+			break;
+		case 2:
+			draw_rect_relative(x, y + size, size * 1.5f, half_width, colour);
+			draw_rect_relative(x + half_width, y + half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y, size * 1.5f, half_width, colour);
+			draw_rect_relative(x - half_width, y - half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y - size, size * 1.5f, half_width, colour);
+			x -= size * 2.f;
+			break;
+		case 3:
+			draw_rect_relative(x, y + size, size * 1.5f, half_width, colour);
+			draw_rect_relative(x, y, size * 1.5f, half_width, colour);
+			draw_rect_relative(x, y - size, size * 1.5f, half_width, colour);
+			draw_rect_relative(x + half_width, y, half_width, 2.5f * size, colour);
+			x -= size * 2.f;
+			break;
+		case 4:
+			draw_rect_relative(x - half_width, y + half_width, half_width, 1.5 * size, colour);
+			draw_rect_relative(x + half_width, y + half_width, half_width, 1.5 * size, colour);
+			draw_rect_relative(x, y, size * 1.5f, half_width, colour);
+			draw_rect_relative(x + half_width, y - half_width, half_width, 1.5 * size, colour);
+			x -= size * 2.f;
+			break;
+		case 5:
+			draw_rect_relative(x, y + size, size * 1.5f, half_width, colour);
+			draw_rect_relative(x - half_width, y + half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y, size * 1.5f, half_width, colour);
+			draw_rect_relative(x + half_width, y - half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y - size, size * 1.5f, half_width, colour);
+			x -= size * 2.f;
+			break;
+		case 6:
+			draw_rect_relative(x, y + size, size * 1.5f, half_width, colour);
+			draw_rect_relative(x - half_width, y + half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y, size * 1.5f, half_width, colour);
+			draw_rect_relative(x - half_width, y - half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x + half_width, y - half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y - size, size * 1.5f, half_width, colour);
+			x -= size * 2.f;
+			break;
+		case 7:
+			draw_rect_relative(x, y + size, size * 1.5f, half_width, colour);
+			draw_rect_relative(x + half_width, y - half_width, half_width, 1.5 * size, colour);
+			draw_rect_relative(x + half_width, y + half_width, half_width, 1.25 * size, colour);
+			x -= size * 2.f;
+			break;
+		case 8:
+			draw_rect_relative(x, y + size, size * 1.5f, half_width, colour);
+			draw_rect_relative(x - half_width, y + half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x + half_width, y + half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y, size * 1.5f, half_width, colour);
+			draw_rect_relative(x - half_width, y - half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x + half_width, y - half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y - size, size * 1.5f, half_width, colour);
+			x -= size * 2.f;
+			break;
+		case 9:
+			draw_rect_relative(x, y + size, size * 1.5f, half_width, colour);
+			draw_rect_relative(x - half_width, y + half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x + half_width, y + half_width, half_width, 1.25 * size, colour);
+			draw_rect_relative(x, y, size * 1.5f, half_width, colour);
+			draw_rect_relative(x + half_width, y - half_width, half_width, 1.5 * size, colour);
+			x -= size * 2.f;
+			break;
+		}
+	}
+}

@@ -1,6 +1,6 @@
 #define is_key_down(k) inputs -> keys[k].is_key_down
 #define is_key_pressed(k) inputs -> keys[k].is_key_down && inputs -> keys[k].state_changed
-#define GRAVITY 150.f
+#define GRAVITY 180.f
 #define GAP_WIDTH 30
 #define VERTICALBIRDPOS 0
 #define WALLSAFE -30
@@ -87,7 +87,10 @@ void run_game(Inputs* inputs, Node** walls, float delta) {
 	draw_walls(*walls);
 	if (check_collisions(*walls)) {
 		//end game
-		
 		init_walls(walls);
+		bird_pos = 0;
+		rise_rate = 0;
+		score = 0;
 	}
+	draw_number(score, -40, 40, 5, 0xbbffbb);
 }
